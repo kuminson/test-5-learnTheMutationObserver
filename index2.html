@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>test mutationObserver</title>
+	<style type="text/css" media="screen">
+		.div1{
+			height: 100px;
+			width: 100px;
+			background-color: orange;
+		}
+		.div2{
+			height: 200px;
+			width: 100px;
+			background-color: yellow;
+		}
+	</style>
+</head>
+<body>
+	<div class="div1" id="div1"></div>
+	<div class="div2"></div>
+	<button id="btn">点我变胖</button>
+
+	<script src="http://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$("#btn").on('click',function() {
+				var nwidth = parseInt($(".div1").css("width"))+100;
+				$(".div1").css("width",nwidth+"px");
+				var nheight = parseInt($(".div1").css("height"))+100;
+				$(".div1").css("height",nheight+"px");
+			});
+
+			// Firefox和Chrome早期版本中带有前缀 兼容早版本
+			var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
+
+			// 获取目标节点
+			// var div1 = $(".div1")[0];
+			// var div1 = document.querySelector(".div1");
+			// var div1 = document.getElementById("div1");
+			var div1 = document.getElementsByTagName("div")[0];
+
+			// 创建观察者对象
+			var watcher = new MutationObserver(function(records){
+				console.log(records.length);
+				records.forEach(function(record){
+					console.log("type:"+ record.type+"<br /> oldValue:"+ record.oldValue);
+				});
+				// console.log("type:"+ record[0].type+"<br /> oldValue:"+ record[0].oldValue);
+				$(".div2").css("width",$(".div1").css("width"));
+			});
+
+			// 配置观察选项
+			var opset = {
+				attributes:true,
+				attributeOldValue:true,
+				attributeFilter:["style"]
+			};
+
+			// 给观察对象绑上目标和选项
+			watcher.observe(div1,opset);
+
+		});
+	</script>
+</body>
+</html>
